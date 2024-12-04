@@ -43,6 +43,18 @@ function checkReportSafety(report: number[]): boolean {
     checkDifferenceTolerance(report, 3);
 }
 
-const safeReports = reports.filter(checkReportSafety).length;
+const safeReports = reports.filter((report) => {
+  let safe = checkReportSafety(report);
+  if (!safe) {
+    for (let i = 0; i < report.length; i++) {
+      const maybeSafe = report.toSpliced(i, 1);
+      safe = checkReportSafety(maybeSafe);
+      if (safe) {
+        break;
+      }
+    }
+  }
+  return safe;
+}).length;
 
 console.log(safeReports);
