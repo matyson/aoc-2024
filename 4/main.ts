@@ -1,14 +1,11 @@
-function revertString(str: string) {
-  return str.split("").reverse().join("");
-}
+function part1() {
+  function revertString(str: string) {
+    return str.split("").reverse().join("");
+  }
 
-function countKeywordInString(str: string, keyword: string) {
-  return (str.match(new RegExp(keyword, "g")) || []).length;
-}
-
-async function main() {
-  const inputPath = "data/input.txt";
-  const input = await Deno.readTextFile(inputPath);
+  function countKeywordInString(str: string, keyword: string) {
+    return (str.match(new RegExp(keyword, "g")) || []).length;
+  }
   const keyword = "XMAS";
   let keywordCount = 0;
 
@@ -54,9 +51,46 @@ async function main() {
     keywordCount += countKeywordInString(revertString(diag), keyword);
   }
 
-  console.log(keywordCount);
+  console.log("Part 1:", keywordCount);
 }
 
+function part2() {
+  function gridAt(x: number, y: number) {
+    return grid[y]?.[x];
+  }
+
+  function findDiagsForPoint(x: number, y: number) {
+    return [
+      gridAt(x - 1, y - 1) + gridAt(x, y) +
+      gridAt(x + 1, y + 1),
+      gridAt(x - 1, y + 1) + gridAt(x, y) +
+      gridAt(x + 1, y - 1),
+    ];
+  }
+
+  function checkMAS(x: number, y: number) {
+    const diags = findDiagsForPoint(x, y);
+    return diags.every((diag) => diag === "MAS" || diag === "SAM");
+  }
+
+  let count = 0;
+  for (let y = 0; y < grid.length; y++) {
+    for (let x = 0; x < grid[y].length; x++) {
+      if (checkMAS(x, y)) {
+        count++;
+      }
+    }
+  }
+
+  console.log("Part 2:", count);
+}
+
+const inputPath = "data/input.txt";
+const input = await Deno.readTextFile(inputPath);
+const lines = input.split("\n");
+const grid = lines.map((line) => line.split(""));
+
 if (import.meta.main) {
-  main();
+  part1();
+  part2();
 }
